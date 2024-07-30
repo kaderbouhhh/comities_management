@@ -1,0 +1,52 @@
+
+body {
+   font-family: "Mada", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+
+}
+
+
+        .bg-warning {
+            background-color: #ffc107; /* Bootstrap warning color */
+        }
+        .bg-grey {
+            background-color: #cdcdcd;
+        }
+        .bg-success {
+            background-color: #fff;
+            transition: background-color 3s ease;
+        }
+        .colored-shadow {
+            box-shadow: 0 0 10px rgba(250, 2, 2, 0.5);
+        }
+        .toggle-icon {
+            cursor: pointer;
+        }
+        .member-table-container {
+            display: none; /* Hide member tables by default */
+        }
+        .committee-container {
+            margin-top : 10px;
+            margin-bottom: 10px;
+            border-radius: 10px 10px 0 0;
+            background-color: #cdcdcd;
+        }
+        thead {
+            border-radius: 15px 15px 0 0;
+        }
+        a {
+            text-decoration: none;
+        }
+        #modalMemberImage {
+            max-width: 85%; /* Initial width */
+            max-height: 65%;
+            min-width: 85%; /* Initial width */
+            min-height: 65%;
+            transition: transform 0.9s; /* Smooth transition effect for scaling */
+        }
+        #modalMemberImage:hover {
+            transform: scale(3); /* Zoom effect on hover */
+        }
+

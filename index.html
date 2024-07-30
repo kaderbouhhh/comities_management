@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة اللجان</title>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/bootstrap-icons.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="css/dataTables.dataTables.min.css">
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Mada:wght@200..900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+ <h2 class="text-secondary bg-light px-5 py-3">إدارة اللجان</h2>
+    <div class="container-fluid px-5 py-3 bordered">
+        <!-- إنشاء اللجان -->
+        <div class="row" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; border-radius: 15px; box-shadow: 1 1 10px rgba(150, 150, 150, 0.5);">
+            <div class="col-lg-4 px-5 py-2 border-start bg-secondary text-light" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; border-radius: 0 15px 15px 0;">
+                <form id="createCommitteeForm" class="">
+                    <h3>إنشاء لجنة</h3>
+                    <input type="hidden" class="form-control" id="committeeIndex" name="committeeIndex" required>
+                    <label for="committeeName" class="form-label">اسم اللجنة:</label>
+                    <input type="text" class="form-control" id="committeeName" name="committeeName" required>
+                    <button type="submit" class="btn btn-dark text-warning px-5 my-2">انشاء</button>
+                </form>
+                <!-- إضافة عضو للجنة -->
+                <hr>
+                <!-- Add Member Form -->
+                <form id="addMemberForm" class="">
+                    <div class="mb-3">
+                        <h3> إضافة عضو جديد</h3>
+                        <input type="hidden" class="form-control" id="memberIndex" name="memberIndex" required>
+                        <label for="memberName" class="form-label">اسم العضو:</label>
+                        <input type="text" class="form-control" id="memberName" name="memberName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="memberEmail" class="form-label">البريد الإلكتروني:</label>
+                        <input type="email" class="form-control" id="memberEmail" name="memberEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="memberPhone" class="form-label">رقم الهاتف:</label>
+                        <input type="tel" class="form-control" id="memberPhone" name="memberPhone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="memberImage" class="form-label">تحميل صورة العضو:</label>
+                        <input type="file" class="form-control" id="memberImage" name="memberImage" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="committeeSelect" class="form-label">اختر اللجنة:</label>
+                        <select class="form-select" id="committeeSelect" name="committeeSelect"></select>
+                    </div>
+                    <button type="submit" class="btn btn-dark text-warning px-5 my-2">حفظ</button>
+                </form>
+            </div>
+
+            <div class="col-lg-8">
+                 <div class="d-flex justify-content-between align-items-center bg-secondary px-2 rounded">
+                    <div>
+                        <h5 class="text-light p-3">قائمة الأعضاء حسب اللجان</h5>
+                    </div>
+                   
+                    <div>
+                        <button id="generatePDFBtn" class="btn btn-danger" title="تحويل الجدول إلى مستند PDF">PDF</button>
+                        <button id="generateEXCELBtn" class="btn btn-success" title="تحويل الجدول إلى مستند EXCEL">EXCEL</button>
+                    </div>
+                </div>
+<hr>
+                <table id="committeeTable" class="display responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>الرقم</th>
+                            <th>اسم اللجنة</th>
+                            <th>اسم العضو</th>
+                             <th>البريد الاليكتروني</th>  
+                             <th>الهاتف</th>
+                            <th>خيارات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="output">
+                        <!-- Dynamic Rows Go Here -->
+                    </tbody>
+                </table>
+<hr>
+          <div id="committeesList" class="bg-secondary rounded">
+    
+ <div class="row">
+                   
+     <div class="col-lg-3 text-start my-3">
+                        <h4 class="text-light">التحكم في اللجان :</h4>
+     </div>
+     <div class="col-lg-7 my-3">
+                        <input type="hidden" class="form-control" id="committeeIndex" name="committeeIndex" required>
+                        <select class="form-select" id="committeeSelectlist" name="committeeSelect"></select>
+     </div>
+<div class="col-lg-2 my-3 text-right" id="comitybutton">
+</div>
+</div>
+</div>
+
+<!-- Existing forms and modal elements -->
+
+<!-- Modal for updating committee -->
+<div class="modal fade" id="updateCommitteeModal" tabindex="-1" aria-labelledby="updateCommitteeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="updateCommitteeForm">
+                <div class="modal-header bg-secondary text-light">
+                    <h5 class="modal-title" id="updateCommitteeModalLabel">تحديث اللجنة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">                       
+                        <label for="updateCommitteeName" class="form-label">اسم اللجنة</label>
+                        <input type="text" class="form-control" id="updateCommitteeName" required>
+                    </div>
+                    <input type="hidden" id="updateCommitteeIndex">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">اغلاق</button>
+                    <button type="submit" class="btn btn-primary">تحديث</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+    <div class="row px-5 py-4 text-secondary bg-light">
+        <div class="col-6 text-end">
+            <a href="mailto:kaderbouhhh@gmail.com">@ تصميم وبرمجة المهندس -عبد القادر بوحلاب-</a>
+        </div>
+        <div class="col-6 text-start">
+            <span>2024 &copy; اللجان البيداغوجية. جميع الحقوق محفوظة .</span>
+        </div>
+    </div>
+
+ <!-- Member Info Modal -->
+    <div class="modal fade" id="memberInfoModal" tabindex="-1" aria-labelledby="memberInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog bg-warning">
+            <div class="modal-content bg-light">
+                <div class="modal-header bg-secondary text-light">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h4 class="modal-title w-100 text-center" id="memberInfoModalLabel">بطاقة العضوية</h4>
+                </div>
+                <div class="row modal-body d-flex">                
+                    <div class="col-lg-8">
+                        <p><strong>الاسم:</strong> <span id="modalMemberName"></span></p>
+                        <p><strong>البريد الإلكتروني:</strong> <span id="modalMemberEmail"></span></p>
+                        <p><strong>رقم الهاتف:</strong> <span id="modalMemberPhone"></span></p>
+                        <p><strong>اللجنة:</strong> <span id="modalMemberCommittee"></span></p>
+                    </div>
+                    <div class="col-lg-4">
+                        <img id="modalMemberImage" src="" alt="Member Image" class="img-thumbnail" style="width: 85%; height: 65%;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .modal-header {
+            position: relative;
+        }
+        .modal-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+<script src="script/jquery-3.6.0.min.js"></script>
+<script src="script/jquery.dataTables.min.js"></script>
+<!-- DataTables Arabic Language File -->
+<!-- <script src="https://cdn.datatables.net/plug-ins/1.11.5/i18n/Arabic.json"></script> -->
+
+<script src="script/bootstrap.bundle.min.js"></script>
+<script src="script/script.js"></script>
+
+
+<!-- jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<!-- AutoTable plugin for jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+<!-- SheetJS library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+
+<script>
+      
+            $('#searchInput').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+        });
+
+$(document).ready(function() {
+            var table = $('#committyTable').DataTable({
+                responsive: true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/Arabic.json"
+                }
+            });
+
+            $('#searchInput').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+        });
+    </script>
+
+</body>
+</html>
